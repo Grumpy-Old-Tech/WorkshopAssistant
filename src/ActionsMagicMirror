@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+import requests
+from Talker import say
+
+#Magic Mirror Remote Control Declarations
+mmmip='ENTER_YOUR_MAGIC_MIRROR_IP'
+
+#Function to get HEX and RGB values for requested colour
+def magicMirror(phrase):
+    try:
+        if 'weather' in phrase:
+            if 'show' in phrase:
+                mmreq_one=requests.get("http://"+mmmip+":8080/remote?action=SHOW&module=module_2_currentweather")
+                mmreq_two=requests.get("http://"+mmmip+":8080/remote?action=SHOW&module=module_3_currentweather")
+            if 'hide' in phrase:
+                mmreq_one=requests.get("http://"+mmmip+":8080/remote?action=HIDE&module=module_2_currentweather")
+                mmreq_two=requests.get("http://"+mmmip+":8080/remote?action=HIDE&module=module_3_currentweather")
+        if 'power off' in phrase:
+            mmreq=requests.get("http://"+mmmip+":8080/remote?action=SHUTDOWN")
+        if 'reboot' in phrase:
+            mmreq=requests.get("http://"+mmmip+":8080/remote?action=REBOOT")
+        if 'restart' in phrase:
+            mmreq=requests.get("http://"+mmmip+":8080/remote?action=RESTART")
+        if 'display on' in phrase:
+            mmreq=requests.get("http://"+mmmip+":8080/remote?action=MONITORON")
+        if 'display off' in phrase:
+            mmreq=requests.get("http://"+mmmip+":8080/remote?action=MONITOROFF")
+        except requests.exceptions.ConnectionError:
+            say("Magic mirror not online")
