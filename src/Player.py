@@ -13,18 +13,35 @@ import psutil
 
 from Talker import say
 
+def saveVolumeLevelBeforeConversation():
+    if isPlayerPlaying():
+        if os.path.isfile("/home/pi/.mediavolume.json"):
+            mpvsetvol=os.system("echo '"+json.dumps({ "command": ["set_property", "volume","10"]})+"' | socat - /tmp/mpvsocket")
+        else:
+            mpvgetvol=subprocess.Popen([("echo '"+json.dumps({ "command": ["get_property", "volume"]})+"' | socat - /tmp/mpvsocket")],shell=True, stdout=subprocess.PIPE)
+            output=mpvgetvol.communicate()[0]
+            for currntvol in re.findall(r"[-+]?\d*\.\d+|\d+", str(output)):
+                with open('/home/pi/.mediavolume.json', 'w') as vol:
+                    json.dump(currntvol, vol)
+            mpvsetvol=os.system("echo '"+json.dumps({ "command": ["set_property", "volume","10"]})+"' | socat - /tmp/mpvsocket")
 
-#Function to check if Player is playing
+def restoreVolumeLevelAfterConversation(): 
+    if isPlayerPlaying():
+        if os.path.isfile("/home/pi/.mediavolume.json"):
+            with open('/home/pi/.mediavolume.json', 'r') as vol:
+                oldvollevel = json.load(vol)
+            print(oldvollevel)
+            mpvsetvol=os.system("echo '"+json.dumps({ "command": ["set_property", "volume",str(oldvollevel)]})+"' | socat - /tmp/mpvsocket")  
+
 def isPlayerPlaying():
     mpvactive = False
     for pid in psutil.pids():
-        p = psutil.Process(pid)
-        if 'mpv'in p.name():
+        if 'mpv' in psutil.Process(pid).name():
             mpvactive = True
             break
     return mpvactive
 
-#Function to manage player start volume
+
 def setPlayerStartVolume():
     if os.path.isfile("/home/pi/.mediavolume.json"):
         with open('/home/pi/.mediavolume.json', 'r') as vol:
@@ -35,11 +52,11 @@ def setPlayerStartVolume():
         startvol=50
     return startvol
 
-#Function to stop player
+
 def stopPlayer():
     pkill = subprocess.Popen(["/usr/bin/pkill","mpv"],stdin=subprocess.PIPE)
 
-#Function to pause player
+
 def pausePlayer(phase):
     if isPlayerPlaying():
         playstatus=os.system("echo '"+json.dumps({ "command": ["set_property", "pause", True]})+"' | socat - /tmp/mpvsocket")
@@ -47,7 +64,6 @@ def pausePlayer(phase):
         say("Sorry nothing is playing right now")
 
 
-#Function to pause player
 def resumePlayer(phase):
     if isPlayerPlaying():
         playstatus=os.system("echo '"+json.dumps({ "command": ["set_property", "pause", False]})+"' | socat - /tmp/mpvsocket")

@@ -21,8 +21,6 @@ import os.path
 from Talker import say
 from Player import setPlayerStartVolume
 
-#API Key for YouTube and KS Search Engine
-google_cloud_api_key='ENTER-YOUR-GOOGLE-CLOUD-API-KEY-HERE'
 
 #Google Music Declarations
 song_ids=[]

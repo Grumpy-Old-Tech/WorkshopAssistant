@@ -19,7 +19,7 @@ import pafy
 from Talker import say
 
 #API Key for YouTube and KS Search Engine
-google_cloud_api_key='ENTER-YOUR-GOOGLE-CLOUD-API-KEY-HERE'
+google_cloud_api_key='AIzaSyAQAN0Y97ZU5m6ETwDmaHePHFgYXuDaegQ'
 
 #Function for google KS custom search engine
 def kickstrater_search(query):

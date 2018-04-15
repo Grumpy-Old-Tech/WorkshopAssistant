@@ -2,11 +2,13 @@
 
 import time
 import os
+import sys
+
 from Talker import say
 
 
 def executeScript(phrase):
-    if 'shut down' in phrase:				#Shutdown
+    if 'shutdown' in phrase:				#Shutdown
         say('OK Shutting down Raspberry Pi')
         time.sleep(10)
         os.system("sudo shutdown -h now")
@@ -17,4 +19,4 @@ def executeScript(phrase):
     if 'restart' in phrase:				#Restart
         say('OK Restarting Assist on Raspberry Pi')
         time.sleep(10)
-        sys.exit
+        sys.exit()

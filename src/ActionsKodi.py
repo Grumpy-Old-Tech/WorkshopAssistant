@@ -3,7 +3,7 @@
 #This is different from AIY Kit's actions
 #Copying and Pasting AIY Kit's actions commands will not work
 
-from kodijson import Kodi, PLAYER_VIDEO
+from kodijson import Kodi, PLAYER_VIDEO, JSONRPC
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from gmusicapi import Mobileclient
@@ -28,7 +28,7 @@ from Talker import say
 
 #Login with custom credentials
 # Kodi("http://IP-ADDRESS-OF-KODI:8080/jsonrpc", "username", "password")
-kodi = Kodi("http://192.168.1.15:8080/jsonrpc", "kodi", "kodi")
+kodi = Kodi("http://192.168.1.73:8080/jsonrpc", "kodi", "kodi")
 
 musicdirectory="/home/osmc/Music/"
 videodirectory="/home/osmc/Movies/"
@@ -36,6 +36,27 @@ windowcmd=["Home","Settings","Weather","Videos","Music","Player"]
 window=["home","settings","weather","videos","music","playercontrols"]
 
 ##-------Start of functions defined for Kodi Actions--------------
+
+def saveVolumeLevelBeforeConversation():
+    try:
+        kodi.JSONRPC.Ping()
+        status=mutevolstatus()
+        vollevel=status[1]
+        with open('/home/pi/.volume.json', 'w') as f:
+            json.dump(vollevel, f)
+        kodi.Application.SetVolume({"volume": 0})
+    except:
+        print("No Kodi server")
+
+def restoreVolumeLevelAfterConversation():
+    try:
+        kodi.JSONRPC.Ping()    
+        with open('/home/pi/.volume.json', 'r') as f:
+            vollevel = json.load(f)
+            kodi.Application.SetVolume({"volume": vollevel})
+    except:
+        print("No Kodi server")
+
 #Function to get Kodi Volume and Mute status
 def mutevolstatus():
     status= kodi.Application.GetProperties({"properties": ("volume","muted")})

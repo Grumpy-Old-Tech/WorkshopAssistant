@@ -4,6 +4,10 @@ import json
 import urllib.request
 from ActionsPushbullet import pushmessage
 
+# Constants
+appid='ENTER-YOUR-APPID-HERE'
+appkey='ENTER-YOUR-APP-KEY-HERE'
+
 def getrecipe(phase):
     ingrequest = phase
     ingredientsidx=ingrequest.find('for')
@@ -12,8 +16,6 @@ def getrecipe(phase):
     ingrequest=ingrequest.replace("'}","",1)
     ingrequest=ingrequest.strip()
     ingrequest=ingrequest.replace(" ","%20",1)
-    appid='ENTER-YOUR-APPID-HERE'
-    appkey='ENTER-YOUR-APP-KEY-HERE'
     recipeurl = 'https://api.edamam.com/search?q='+ingrequest+'&app_id='+appid+'&app_key='+appkey
     print(recipeurl)
     recipedetails = urllib.request.urlopen(recipeurl)

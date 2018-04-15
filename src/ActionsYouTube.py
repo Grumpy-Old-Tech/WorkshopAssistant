@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
+from Talker import say
+from Player import setPlayerStartVolume
+
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from gmusicapi import Mobileclient
+#from gmusicapi import Mobileclient
 
 import requests
 import os
 import os.path
-
 import time
 import re
 import subprocess
@@ -16,19 +18,16 @@ import urllib.request
 import pafy
 
 #API Key for YouTube and KS Search Engine
-google_cloud_api_key='ENTER-YOUR-GOOGLE-CLOUD-API-KEY-HERE'
+google_cloud_api_key='AIzaSyAQAN0Y97ZU5m6ETwDmaHePHFgYXuDaegQ'
 
 #YouTube API Constants
-DEVELOPER_KEY = google_cloud_api_key
 YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
-
-playshell = None
 
 
 #Function to search YouTube and get videoid
 def youtube_search(query):
-  youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
+  youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=google_cloud_api_key)
 
   req=query
   # Call the search.list method to retrieve results matching the specified
@@ -153,7 +152,7 @@ def youtubeplayer():
         tracks=""
         numtracks=0
 
-    startingvol=mpvvolmgr()
+    startingvol = setPlayerStartVolume()
 
     if not tracks==[]:
         if currenttrackid<numtracks:
@@ -221,17 +220,17 @@ def streamActions(phase):
     os.system('pkill mpv')
     if os.path.isfile("/home/pi/GassistPi/src/trackchange.py"):
         os.system('rm /home/pi/GassistPi/src/trackchange.py')
-        if 'autoplay' in usrCommand:
+        if 'autoplay' in phase:
             os.system('echo "from actions import youtubeplayer\n\n" >> /home/pi/GassistPi/src/trackchange.py')
             os.system('echo "youtubeplayer()\n" >> /home/pi/GassistPi/src/trackchange.py')
-            YouTube_Autoplay(str(usrcmd).lower())
+            YouTube_Autoplay(str(phase).lower())
         else:
-            YouTube_No_Autoplay(usrCommand)
+            YouTube_No_Autoplay(phase)
     else:
-        if 'autoplay' in usrCommand:
+        if 'autoplay' in phase:
             os.system('echo "from actions import youtubeplayer\n\n" >> /home/pi/GassistPi/src/trackchange.py')
             os.system('echo "youtubeplayer()\n" >> /home/pi/GassistPi/src/trackchange.py')
-            YouTube_Autoplay(usrCommand)
+            YouTube_Autoplay(phase)
         else:
-            YouTube_No_Autoplay(usrCommand)
+            YouTube_No_Autoplay(phase)
 
